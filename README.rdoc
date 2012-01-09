@@ -1,0 +1,29 @@
+= WildcardScopes
+
+Use ActiveRecord scopes with dynamic names.
+
+= Example
+
+  # config/initializers/wildcard_scopes.rb
+  
+  # Global scopes
+  Avers::Application.config.wildcard_scopes = proc {
+    # Wildcard scope should be wrapped in a proc. a is array of matches.
+    wildcard_scope /descend_by_(.*)/, proc { |a| order("#{table_name}.#{a.first} DESC") }
+  }
+
+  # app/models/user.rb
+  class User < ActiveRecord::Base
+    wildcard_scope /ascend_by_(.*)/, proc { |a| order("#{table_name}.#{a.first} ASC") }
+  end
+  
+  User.ascend_by_name.to_sql     # SELECT "users".* FROM "users"  ORDER BY users.name ASC
+  User.ascend_by_position.to_sql # SELECT "users".* FROM "users"  ORDER BY users.position ASC
+  User.descend_by_name.to_sql    # SELECT "users".* FROM "users"  ORDER BY users.name DESC
+    
+= Notes
+
+1. This gem is created to simplify migration from SearchLogic to Ransack.
+2. Use of global scopes is not a good idea at all.
+3. Association extensions are not yet allowed.
+4. Tested with Rails 3.1, Ruby 1.8.7 and 1.9.3.

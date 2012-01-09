@@ -6,11 +6,8 @@ Use ActiveRecord scopes with dynamic names.
 
   # config/initializers/wildcard_scopes.rb
   
-  # Global scopes
-  Avers::Application.config.wildcard_scopes = proc {
-    # Wildcard scope should be wrapped in a proc. a is array of matches.
-    wildcard_scope /descend_by_(.*)/, proc { |a| order("#{table_name}.#{a.first} DESC") }
-  }
+  # Global scopes. Wildcard scope should be wrapped in a proc. a is array of matches.
+  ActiveRecord::Base.wildcard_scope /descend_by_(.*)/, proc { |a| order("#{table_name}.#{a.first} DESC") }
 
   # app/models/user.rb
   class User < ActiveRecord::Base
